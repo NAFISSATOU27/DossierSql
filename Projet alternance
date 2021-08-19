@@ -22,3 +22,27 @@ on a.matricule=b.matricule
 where c_nat_ctt='CDI'  and C_FILIERE not in ('RD','9') and présent_au between '01/01/2017' and '31/07/2021')
 
 ;
+
+execute P_debut.debut := to_date('01/01/2018','DD/MM/YYYY');
+execute P_fin.fin := to_date('30/06/2020','DD/MM/YYYY');
+
+SELECT*
+from
+(select a.matricule, to_char(a.d_sort_soc,'DD/MM/YYYY') as d_sort_soc,
+a.l_motf_sort_soc,a.mois,b.debut,b.Promotion
+from VP_REF_EFF_ENTREESORTIE_2DATES a
+
+left join 
+(select  matricule,l_motf_perd,to_char(debut,'DD/MM/YYYY') as debut,
+case when type_mvt_fonc ='Promotion' then 'OUI' end Promotion
+from VP_REF_EFF_MVT_ENTRE_2_DATES 
+where type_mvt_fonc in ('Promotion')) b
+on a.matricule=b.matricule
+where type_mvt='Sortie' and c_aff_str_adm not in ('HL000000000000000','CE000000000000000')
+and c_nat_ctt='CDI')
+where debut between add_months(d_sort_soc ,-12) and d_sort_soc or debut is null or debut is not null
+;
+
+--les presents
+
+
